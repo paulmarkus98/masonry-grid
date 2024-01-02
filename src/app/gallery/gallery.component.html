@@ -1,0 +1,14 @@
+  <ngx-masonry class="masonry-grid"
+               infiniteScroll
+               [infiniteScrollDistance]="2"
+               [infiniteScrollThrottle]="20"
+               [infiniteScrollUpDistance]="9"
+               (scrolledUp)="onScrollUp()"
+               [options]="options">
+    <div ngxMasonryItem class="masonry-item" *ngFor="let image of images">
+      <app-image [image]="image"></app-image>
+    </div>
+  </ngx-masonry>
+<div #loadingSpinner id="loading-spinner">
+  <div class="loader">&nbsp;</div>    <!-- &nbsp; required for IntersectionObserver -->
+</div>

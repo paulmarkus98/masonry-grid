@@ -1,0 +1,15 @@
+.hero {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  font-family: "Book Antiqua", serif;
+  color: #FFFF;;
+  background-color: #573B1DFF;
+  text-align: center;
+  z-index: 1000;
+  border-bottom: 3px solid #FFF;
+}
+
+.app-gallery {
+  padding-top: 85px;
+}
