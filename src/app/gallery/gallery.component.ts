@@ -2,6 +2,8 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import { UnsplashService } from '../services/unsplash.service';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import {animate, style} from '@angular/animations';
+import { fromEvent } from 'rxjs';
+import { debounceTime, map, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-gallery',
@@ -11,10 +13,9 @@ import {animate, style} from '@angular/animations';
 export class GalleryComponent implements AfterViewInit {
 
   images: any[] = [];
+  visibleImages: any[] = [];
   currentPage = 0;
   isLoading = false;
-  batchSize = 20;
-  maxImages = 2 * this.batchSize;
   private intersectionObserver!: IntersectionObserver;
   @ViewChild('loadingSpinner') loadingSpinner!: ElementRef;
 
@@ -37,12 +38,10 @@ export class GalleryComponent implements AfterViewInit {
   };
 
   ngAfterViewInit(): void {
-    this.loadImages();    // Initial load images
     this.intersectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio > 0) {
-            console.log('Loading spinner Observed!');
             this.loadNextBatch();
           }
         });
@@ -52,15 +51,24 @@ export class GalleryComponent implements AfterViewInit {
       }
     );
     this.intersectionObserver.observe(this.loadingSpinner.nativeElement);
+    fromEvent(window, 'scroll')
+      .pipe(
+        debounceTime(100),
+        map(() => window.scrollY),
+        filter(scrollY => scrollY === 0 && this.currentPage > 0)
+      )
+      .subscribe(() => this.onScrollUp());
   }
 
   loadImages(): void {
     if (!this.isLoading) {
       this.isLoading = true;
+      console.log('Batch: ', this.currentPage);
       this.unsplashService.getImages(this.currentPage)
         .subscribe((newImages) => {
-          this.images = [...this.images, ...newImages];
-          console.log(this.images);
+          this.images =  [...newImages, ...this.visibleImages];
+          this.visibleImages = this.images.slice(0, 40);
+          console.log('Images: ', this.visibleImages);
           this.isLoading = false;
         })
     }
@@ -68,26 +76,17 @@ export class GalleryComponent implements AfterViewInit {
 
   loadNextBatch(): void {
     this.currentPage++;
-    console.log('CurrentPage: ', this.currentPage);
     this.loadImages();
   }
 
   loadPreviousBatch(): void {
     this.currentPage--;
-    console.log('CurrentPage: ', this.currentPage);
     this.loadImages();
   }
 
   onScrollUp(): void {
     if (window.scrollY === 0 && this.currentPage > 1) {
-      console.log('SCROL UP');
       this.loadPreviousBatch();
-      const previousBatch = this.images.slice(this.batchSize, this.batchSize * 2);
-      this.images = [...previousBatch, ...this.images];
-
-      if (this.images.length > this.maxImages) {
-        this.images = this.images.slice(0, this.maxImages);
-      }
     }
   }
 }

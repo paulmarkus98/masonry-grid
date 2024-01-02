@@ -5,7 +5,7 @@
                [infiniteScrollUpDistance]="9"
                (scrolledUp)="onScrollUp()"
                [options]="options">
-    <div ngxMasonryItem class="masonry-item" *ngFor="let image of images">
+    <div ngxMasonryItem class="masonry-item" *ngFor="let image of visibleImages">
       <app-image [image]="image"></app-image>
     </div>
   </ngx-masonry>
