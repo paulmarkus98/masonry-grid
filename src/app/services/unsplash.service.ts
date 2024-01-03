@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UnsplashService {
-  private apiKey = 'YlMJsQ7MUokAhNze7-Iiqa3AjMFcHKSuaaIUInkx--E';
+  private apiKey = 'EucE6kBQ9s-GgDm41YL7zG7hSv6aMtj37IjajA_Ivo8';
   private apiUrl = 'https://api.unsplash.com/photos/';
   private batchSize = 20;
 
