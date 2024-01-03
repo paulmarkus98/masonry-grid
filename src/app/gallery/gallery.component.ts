@@ -53,7 +53,7 @@ export class GalleryComponent implements AfterViewInit {
     this.intersectionObserver.observe(this.loadingSpinner.nativeElement);
     fromEvent(window, 'scroll')
       .pipe(
-        debounceTime(100),
+        debounceTime(200),
         map(() => window.scrollY),
         filter(scrollY => scrollY === 0 && this.currentPage > 0)
       )
@@ -85,7 +85,7 @@ export class GalleryComponent implements AfterViewInit {
   }
 
   onScrollUp(): void {
-    if (window.scrollY === 0 && this.currentPage > 1) {
+    if (window.scrollY === 0 && this.currentPage > 0) {
       this.loadPreviousBatch();
     }
   }
